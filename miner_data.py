@@ -23,7 +23,7 @@ size_limit = 50
 clear_old_data = True
 dir_of_files = "D:/TickDataDownloader/tickdata/____COMPLETE_DATA_____/"
 set_timeframes = ["m15", "m30", "h1", "m5"]
-set_assets = ["gbpusd", "gbpjpy", "audjpy", "nzdusd", "xauusd", "eurgbp", "audusd", "eurusd", "usdchf"]
+set_assets = ["gbpusd", "gbpjpy", "audjpy", "usdjpy", "nzdusd", "xagusd","xauusd", "eurgbp", "audusd", "eurusd", "usdchf"]
 DATA_RESULT= "miner_result.csv"
 
 def list_files():

@@ -233,7 +233,7 @@ class PatternAnalisys():
 if __name__=="__main__":
 	set_timeframes = ["m15", "m30", "h1", "m5"]
 	set_assets = ["gbpusd", "gbpjpy", "audjpy", "nzdusd", "xauusd", "eurgbp", 
-	              "audusd", "eurusd", "usdchf"]
+	              "audusd", "eurusd", "usdchf", "xagusd"]
 	asset_timeframes = {"set_assets": set_assets, "set_timeframes": set_timeframes}
 
 	#
