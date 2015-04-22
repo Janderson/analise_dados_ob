@@ -13,103 +13,107 @@ from decimal import *
 from shutil import copyfile
 from pylab import *
 
-debug = False
+
+debug = True
 ano_inicio = 2014
 mes_inicio = 01
 dia_inicio = 01
 tam_para_doji = 5
-tam_trend = 3 # TAMANHO MINIMO DA TENDENCIA
+tam_self.trend = 2 # TAMANHO MINIMO DA TENDENCIA
 size_limit = 50
 clear_old_data = True
 dir_of_files = "D:/TickDataDownloader/tickdata/____COMPLETE_DATA_____/"
-set_timeframes = ["m15", "m30", "h1", "m5"]
-set_assets = ["gbpusd", "gbpjpy", "audjpy", "usdjpy", "nzdusd", "xagusd","xauusd", "eurgbp", "audusd", "eurusd", "usdchf"]
+set_assets = ["gbpusd", "usdjpy", "audusd", "eurusd"]
+set_timeframes = ["m15"]
+#set_assets = ["audusd"]
 DATA_RESULT= "miner_result.csv"
 
 def list_files():
 	return os.listdir(dir_of_files)
 
-# Limpeza do arquivo original do metatrader 
-def clear_file(fname_ori):
-	fname = 'temp/dt_an%s.csv' % fname_ori
-	if not os.path.isfile(fname) or clear_old_data:
-         copyfile('%s%s.csv' % (dir_of_files, fname_ori), fname)
-	return fname.replace(".csv","")
 
+class MinerData:
+	def __init__(self, file_to_miner, only_body=True):
+		self.filename_miner  = file_to_miner
+		self.i = 0
+		self.trend = 0
+		self.size_candles = []
 
-# conta os candles
-# estrutura resultante
-def analise_trend(fname_ori):
-	print ". analisando", fname_ori,
-	count_trend = {}
-	count_linhas = 0 
-	# linha dados data,open,vhigh,low,close,0
-	resultcsvname ="minerdata/%s_data.csv" % fname_ori
-	result_csv = open(resultcsvname, "a")
-	with open('temp/dt_an%s.csv' % fname_ori, 'r') as csvfile:
-		i = 0
-		trend = 0
-		size_candles = []
-		for line in csvfile:
-			alta=False
-			baixa=False
-			sline = line.split(",")
-			#print "SLINE", sline
-			vdata = str(sline[0] + " "+ sline[1]).replace(".", "/")
-			vopen, vhigh, vlow, vclose = Decimal(sline[2]), Decimal(sline[3]), Decimal(sline[4]), Decimal(sline[5])
-			size = int( abs(vclose - vopen) * 10 ** abs(Decimal(str((vclose - vopen))).as_tuple().exponent))
-			size_candles.append(size)
-			#print "trend:", trend, " size:", size
-			if debug: print fname_ori, "-> vdata", vdata, "vopen", vopen, "vclose", vclose, "size",  size, "trend", trend
+	# Limpeza do arquivo original do metatrader 
+	def clear_file(self):
+		fname = 'temp/dt_an%s.csv' % self.filename_miner
+		if not os.path.isfile(fname) or clear_old_data:
+	         copyfile('%s%s.csv' % (dir_of_files, self.filename_miner), fname)
+		return fname.replace(".csv","")
 
-			if vclose > vopen:
-				alta=True
-				if trend >=0:
-					trend+=1
-				else:
-					if abs(trend)>= tam_trend:
-						if debug: 
-							print fname_ori, " BIG TREND ", trend, "end data", vdata
-						#print str(size_candles)
-						result_csv.write(fname_ori.split("_")[0] + ";" + fname_ori.split("_")[1] + ";" + str(vdata) + ";" + str(abs(trend)) +";" + str(trend) 
-							+";\"" + str(size_candles).replace("[","").replace("]","") + "\"\n")
-						if not count_trend.has_key(abs(trend)):
-							count_trend[abs(trend)]=1
-						else:
-							count_trend[abs(trend)]+=1
-					size_candles = []
-					trend=1
-			if vclose < vopen:
-				baixa=True
-				if trend <=0:
-					trend-=1
-				else:
-					# Fim da tendencia atual
-					if abs(trend)>= tam_trend:
-						if debug: 
-							print fname_ori, " BIG TREND ", trend, "end data", vdata
-						#print str(size_candles)
-						result_csv.write(fname_ori.split("_")[0] + ";" + fname_ori.split("_")[1] + ";" + str(vdata) + ";" + str(abs(trend)) +";" + str(trend) 
-							+";\"" + str(size_candles).replace("[","").replace("]","") + "\"\n")
-						if not count_trend.has_key(abs(trend)):
-								count_trend[abs(trend)]=1
-						else:
-								count_trend[abs(trend)]+=1
-					size_candles = []
-					trend=-1
-			if alta == False and baixa == False:
-				#size_candles = []
-				if trend > 0:
-					trend+=1
-				else:
-					trend-=1
-			
+	def result_filename(self, filename, type):
+		return "minerdata/%s_data.csv" % filename
 
-			i+=1
-		count_linhas=i
-	result_csv.close()
-	print "[ok]"
-	return count_linhas, count_trend
+	def analise(self):
+		self.clear_file()
+		print ". analisando", self.filename_miner,
+		count_self.trend = {}
+		count_linhas = 0 
+		# linha dados data,open,vhigh,low,close,0
+		resultcsvname = miner_filename(self.filename_miner)
+		result_csv = open(resultcsvname, "a")
+		with open('temp/dt_an%s.csv' % self.filename_miner, 'r') as csvfile:
+			for line in csvfile:
+				alta=False
+				baixa=False
+				sline = line.split(",")
+				#print "SLINE", sline
+				vdata = str(sline[0] + " "+ sline[1]).replace(".", "/")
+				vopen, vhigh, vlow, vclose = Decimal(sline[2]), Decimal(sline[3]), Decimal(sline[4]), Decimal(sline[5])
+				size = int( abs(vclose - vopen) * 10 ** abs(Decimal(str((vclose - vopen))).as_tuple().exponent))
+				self.size_candles.append(size)
+				if debug: print "##############> self.trend:", self.trend, " size:", size
+				if debug: print self.filename_miner, "-> vdata", vdata, "vopen", vopen, "vclose", vclose, "size",  size, "self.trend", self.trend
+
+				if vclose > vopen:
+					alta=True
+					if self.trend >=0:
+						self.trend+=1
+					else:
+						if abs(self.trend)>= tam_self.trend:
+							if debug: 
+								print self.filename_miner, " BIG self.trend ", self.trend, "end data", vdata
+							#print str(self.size_candles)
+							result_csv.write(self.filename_miner.split("_")[0] + ";" + self.filename_miner.split("_")[1] + ";" + str(vdata) + ";" + str(abs(self.trend)) +";" + str(self.trend) 
+								+";\"" + str(self.size_candles).replace("[","").replace("]","") + "\"\n")
+							if not count_self.trend.has_key(abs(self.trend)):
+								count_self.trend[abs(self.trend)]=1
+							else:
+								count_self.trend[abs(self.trend)]+=1
+						self.size_candles = []
+						self.trend=1
+				if vclose < vopen:
+					baixa=True
+					if self.trend <=0:
+						self.trend-=1
+					else:
+						# Fim da tendencia atual
+						if abs(self.trend)>= tam_self.trend:
+							if debug: 
+								print self.filename_miner, " BIG self.trend ", self.trend, "end data", vdata
+							#print str(self.size_candles)
+							result_csv.write(self.filename_miner.split("_")[0] + ";" + self.filename_miner.split("_")[1] + ";" + str(vdata) + ";" + str(abs(self.trend)) +";" + str(self.trend) 
+								+";\"" + str(self.size_candles).replace("[","").replace("]","") + "\"\n")
+							if not count_self.trend.has_key(abs(self.trend)):
+									count_self.trend[abs(self.trend)]=1
+							else:
+									count_self.trend[abs(self.trend)]+=1
+						self.size_candles = []
+						self.trend=-1
+				if alta == False and baixa == False:
+					self.trend=0
+				
+
+				i+=1
+			count_linhas=i
+		result_csv.close()
+		print "[ok]"
+		return count_linhas, count_self.trend
 
 if __name__=="__main__":
 	all_count = []
@@ -124,18 +128,11 @@ if __name__=="__main__":
 		if ".csv" in filename and filesplit>1 and filesplit[1] in set_timeframes and filesplit[0] in set_assets:
 			filename = filename.replace(".csv", "")
 			print "analisando", filename,
-			clear_file(filename)
-			r = analise_trend(filename)
+			md = MinerData()
+			r = md.analise(filename)
 			for item in r[1].iteritems():
 				all_count.append((filename.upper(), filename.split("_")[0].upper() + ";" + filename.split("_")[1] + ";" + str(r[0]) +  ";" +str(item[0]) + ";" + str(item[1])))
 	result_csv.close()			
-
-	print "gerando heatmap ... ",
-	try: 
-		matrix_heatmap(DATA_RESULT)
-		print "DONE"
-	except :
-		print "ERRO"
 
 	resume_f = file('resumo_miner.csv','w')
 	resume_f.write("\n")

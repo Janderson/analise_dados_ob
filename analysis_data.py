@@ -76,7 +76,7 @@ def matrix_heatmap():
 class PatternAnalisys():
     def __init__(self, array_pattern = 
             ["p_trendcolor","p_sizefirst_c", "p_candledecinc"], result_name="pattern_analisy",
-            filter_size=5, asset_timeframes={"set_assets":["gbpjpy"], "set_timeframes":["m5"]},
+            filter_size=5, asset_timeframes={"set_assets":["gbpjpy"], "set_timeframes":["M15"]},
             remove_in_filter = []
             ):
         self.asset_timeframes = asset_timeframes
@@ -231,9 +231,9 @@ class PatternAnalisys():
 
 
 if __name__=="__main__":
-	set_timeframes = ["m15", "m30", "h1", "m5"]
+	set_timeframes = ["m15", "m5"]
 	set_assets = ["gbpusd", "gbpjpy", "audjpy", "nzdusd", "xauusd", "eurgbp", 
-	              "audusd", "eurusd", "usdchf", "xagusd"]
+	              "audusd", "eurusd", "usdchf"]
 	asset_timeframes = {"set_assets": set_assets, "set_timeframes": set_timeframes}
 
 	#
@@ -241,25 +241,25 @@ if __name__=="__main__":
 	#
 	pa = PatternAnalisys(
 		array_pattern = ["p_onlycount", "p_weekday"], result_name="analis_week_", 
-		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M5"]},
+		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M15"]},
 		remove_in_filter = ["p_onlycount"])
 	pa.analisy()
 
 	pa = PatternAnalisys(
 		array_pattern = ["p_onlycount", "p_timesession", "p_weekday"], 
 		result_name="analis_session_with_week_M5", 
-		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M5"]},
+		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M15"]},
 		remove_in_filter = ["p_onlycount"]
 		); 
 	pa.analisy()
 	pa = PatternAnalisys(
 		array_pattern = ["p_timesession", "p_weekday"], 
 		result_name="analis_week_nocount_M5", 
-		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M5"]}); 
+		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M15"]}); 
 	pa.analisy()
 
 	pa = PatternAnalisys(
 		array_pattern = ["p_trendcolor","p_onlycount", "p_timesession", "p_weekday"], 
 		result_name="analis_session_with_w_andcolor_M5", 
-		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M5"]}); 
+		filter_size=5, asset_timeframes= {"set_assets": set_assets, "set_timeframes": ["M15"]}); 
 	pa.analisy()
