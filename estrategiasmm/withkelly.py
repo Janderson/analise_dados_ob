@@ -147,3 +147,27 @@ class cerstrategy(estrategia):
 
 	def seLoss(self):
 		self.seWin()
+
+
+class guetting_est(estrategia):
+	def s_aposta_inicial(self):
+		self.start_percent = 0.62
+		self.payout = np.mean(self.tester.array_payout)
+		if self.debug: print self.p["conta"], self.p, self.payout
+		self.aposta_inicial = self.p["conta"] / 20
+		self.aposta = self.aposta_inicial 
+		self.count_win = 0
+		self.count_loss = 0
+		self.count =0
+
+	def seWin(self):
+		if self.count_apostas<5:
+			win_odds = 0.6
+		else:
+			win_odds = float(self.peracerto()/100)
+		self.aposta = ( self.conta * ((win_odds-(1-win_odds))/float(self.aposta)) ) / self.divisor 
+		if self.aposta<=0:
+			self.aposta = self.aposta_inicial
+
+	def seLoss(self):
+		self.seWin()
